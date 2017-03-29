@@ -3,15 +3,12 @@ import { Menu, Icon, Affix } from 'antd';
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 
-import { css } from 'glamor';
-
 const styles = {
   root: {
     lineHeight: '64px',
     height: '65px'
   }
 };
-let cssRoot = css(styles.root);
 
 export default class TopNav extends PureComponent {
   state = {
@@ -30,12 +27,12 @@ export default class TopNav extends PureComponent {
         onClick={this.handleClick}
         selectedKeys={[this.state.current]}
         mode="horizontal"
-        // {...cssRoot}
-        // className={cssRoot}
         style={styles.root}
       >
         <Menu.Item key="home">
-          <Icon type="home" />Dashboard
+          <a href="/">
+            <Icon type="home" />Dashboard
+          </a>
         </Menu.Item>
 
         <Menu.Item key="logout" style={{ float: 'right' }}>

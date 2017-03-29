@@ -1,8 +1,8 @@
 import { PureComponent } from 'react';
-import { Row, Col, Button } from 'antd';
-// import { Image } from 'semantic-ui-react';
-
-import { css } from 'glamor';
+import { Row, Col, Button, Icon } from 'antd';
+import _ from 'lodash';
+import Schedule from './Schedule';
+import { feeds } from './util';
 
 const SIZES = {
   big: '2rem',
@@ -11,44 +11,159 @@ const SIZES = {
   massive: '5rem'
 };
 
-let cssImage = css({
-  width: '100%'
-  // borderRadius: '50%'
-  // padding: '5px'
-});
-const Image = ({ size }) => (
-  <img
-    {...css(cssImage, css({ width: SIZES[size] }))}
-    src="http://icons.iconarchive.com/icons/carlosjj/microsoft-office-2013/256/Excel-icon.png"
-  />
-);
+let styleHeader = {
+  marginBottom: '15px',
+  fontWeight: '500'
+};
 
-let cssRow = css({
-  padding: '15px 0'
-});
+const styleImage = size => ({ width: SIZES[size] });
+
+let styleButton = {
+  marginRight: '8px'
+};
+
+let styleFeedType = {
+  textAlign: 'center',
+  width: '85%'
+};
+
+const Image = ({ size, url }) => <img style={styleImage(size)} src={url} />;
 
 export default class Dashboard extends PureComponent {
+  state = {
+    popupScheduleVisible: false,
+    feeds
+  };
+
+  handleScheduleChange = newState => {
+    this.setState(newState);
+  };
+
   render() {
+    const { popupScheduleVisible, feeds } = this.state;
+
     return (
       <div>
-        <Row {...cssRow} className="ant-border-bottom">
-          <Col span={12}>
-            <h4>
-              Feed 1
-            </h4>
-            <Image size="huge" />
-          </Col>
-          <Col span={12}>
-            <h4>
-              Status
-            </h4>
+        {feeds.map(feed => (
+          <Row
+            key={feed.id}
+            style={{
+              padding: '15px 0'
+            }}
+            className="ant-border-bottom"
+          >
+            <Col span={8}>
+              <div style={styleHeader}>
+                {feed.title}
+              </div>
+              <Row
+                style={styleFeedType}
+                type="flex"
+                justify="space-around"
+                align="middle"
+              >
+                <Col span={8}>
+                  <Image size="huge" url={feed.from} />
 
-          </Col>
-        </Row>
-        <Row {...cssRow} className="ant-border-bottom">
-          <Col span={12}>Feed 1</Col>
-          <Col span={12}>Status</Col>
-        </Row>
+                </Col>
+                <Col span={8}>
+                  <Icon
+                    style={{
+                      fontSize: '2rem'
+                    }}
+                    type="arrow-right"
+                  />
+
+                </Col>
+                <Col span={8}>
+                  <Image size="huge" url={feed.to} />
+
+                </Col>
+              </Row>
+              <Row style={styleFeedType}>
+                <Col span={24}>
+                  {feed.fromType}
+                </Col>
+              </Row>
+            </Col>
+            <Col span={16}>
+              <div style={styleHeader}>
+                Status:
+                <span className="feed-status">
+                  {` `}{feed.isRunning ? 'Running...' : 'Stopped'}
+                </span>
+              </div>
+              <div
+                style={{
+                  fontSize: '.8rem'
+                }}
+              >
+                <div className="feed-status">
+                  {feed.status}
+                </div>
+                <div
+                  style={{
+                    marginBottom: '8px'
+                  }}
+                >
+                  {` `}Schedule <Icon type="arrow-right" />
+                  {` `}{feed.schedule}
+                </div>
+                <Button
+                  type="primary"
+                  shape="circle"
+                  icon={feed.isRunning ? 'pause' : 'play-circle'}
+                  style={styleButton}
+                  onClick={() => {
+                    this.setState((prevState, props) => {
+                      const prevFeeds = [...prevState.feeds];
+                      var index = _.findIndex(prevFeeds, { id: feed.id });
+                      feed.isRunning = !prevFeeds[index].isRunning;
+                      prevFeeds.splice(index, 1, { ...feed });
+                      return {
+                        feeds: prevFeeds
+                      };
+                    });
+                  }}
+                />
+
+                <Button
+                  type="default"
+                  shape="circle"
+                  icon="edit"
+                  style={styleButton}
+                  onClick={e => {
+                    window.location.href = 'settings';
+                  }}
+                />
+                <Button
+                  type="danger"
+                  shape="circle"
+                  icon="delete"
+                  style={styleButton}
+                />
+                <Button type="default" style={styleButton}>Run Now</Button>
+                <Button
+                  type="default"
+                  icon="calendar"
+                  style={styleButton}
+                  onClick={e => {
+                    this.setState({
+                      popupScheduleVisible: true
+                    });
+                  }}
+                >
+                  Schedule
+                </Button>
+                <Schedule
+                  visible={popupScheduleVisible}
+                  onChange={this.handleScheduleChange.bind(this)}
+                />
+              </div>
+
+            </Col>
+          </Row>
+        ))}
 
       </div>
     );

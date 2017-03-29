@@ -1,43 +1,45 @@
 import { PureComponent } from 'react';
-import { DatePicker, Button, Layout, Breadcrumb, Icon } from 'antd';
-const { Header, Footer, Sider, Content } = Layout;
+import {
+  LocaleProvider,
+  DatePicker,
+  Button,
+  Layout,
+  Breadcrumb,
+  Icon
+} from 'antd';
+import enUS from 'antd/lib/locale-provider/en_US';
+
 import TopNav from './TopNav';
-import Dashboard from './Dashboard';
 
-import { css } from 'glamor';
+const { Header, Footer, Sider, Content } = Layout;
 
-let rule = css({
-  height: '1000px'
-});
-
-let cssHeader = css({ position: 'fixed', width: '100%', zIndex: 10 });
-let cssContent = css({ marginTop: '64px', padding: '0 50px' });
+let styleHeader = { position: 'fixed', width: '100%', zIndex: 10 };
+let styleContent = { marginTop: '64px', padding: '0 50px' };
+let styleFooter = { textAlign: 'center' };
 let styleBreadCrumb = { marginTop: '20px', marginBottom: '20px' };
 
 export default class App extends PureComponent {
   render() {
     return (
-      <div>
-        <Layout {...rule}>
-          <Header {...cssHeader}>
+      <LocaleProvider locale={enUS}>
+        <Layout>
+          <Header style={styleHeader}>
             <TopNav />
           </Header>
-          <Content {...cssContent}>
+          <Content style={styleContent}>
             <Breadcrumb style={styleBreadCrumb}>
               <Breadcrumb.Item href="">
                 <Icon type="home" />
-                <span>Dashboard</span>
               </Breadcrumb.Item>
               <Breadcrumb.Item href="">
-                <span>Feeds</span>
+                <span>{this.props.breadcrumb}</span>
               </Breadcrumb.Item>
             </Breadcrumb>
-            <Dashboard />
+            {this.props.children}
           </Content>
-          <Footer>Footer</Footer>
+          <Footer style={styleFooter}>Stock Sync © 2017</Footer>
         </Layout>
-
-      </div>
+      </LocaleProvider>
     );
   }
 }
