@@ -1,136 +1,122 @@
 import { PureComponent } from 'react';
-import { Form, Select, Input, Col } from 'antd';
+import { Form, Button, Icon, Row } from 'antd';
 
-const storeFields = [
+import FieldMapping from './FieldMapping';
+
+const FIELD_MAPPINGS = 'FIELD_MAPPINGS';
+
+const requiredFields = [
   {
-    required: true,
-    value: 'sku',
-    text: 'SKU'
+    key: 'SKU',
+    storeField: 'SKU',
+    required: true
   },
   {
-    required: true,
-    value: 'price',
-    text: 'Price'
+    key: 'Price',
+    storeField: 'Price',
+    required: true
   },
   {
-    required: true,
-    value: 'title',
-    text: 'Title'
-  },
-  {
-    required: false,
-    value: 'vendor',
-    text: 'Vendor'
+    key: 'Title',
+    storeField: 'Title',
+    required: true
   }
 ];
 
-class FieldMapping extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    const value = this.props.value || {};
-    this.state = {
-      storeField: value.storeField,
-      feedHeading: value.feedHeading
-    };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // Should be a controlled component.
-    console.log('cwr > nextProps:', nextProps);
-    if ('value' in nextProps) {
-      const value = nextProps.value;
-      this.setState(value);
-    }
-  }
+export default class FieldMappings extends PureComponent {
   render() {
-    const { storeField, feedHeading } = this.state;
+    // console.log('FieldMappings render');
+    const { form } = this.props;
+    const { getFieldDecorator, getFieldValue } = form;
+
+    getFieldDecorator('fieldMappings', {
+      initialValue: requiredFields
+    });
+    const fieldMappings = getFieldValue('fieldMappings');
+    console.log(
+      'RENDER fieldMappings:',
+      JSON.stringify(fieldMappings, null, 2)
+    );
+
+    const formItems = fieldMappings.map((k, index) => {
+      // console.log('formItems k:', k);
+      return (
+        <div key={k.key}>
+          <FieldMapping
+            initialValue={k}
+            checkField={this.checkField}
+            form={form}
+            storeFieldDisabled={k.required}
+            onRemove={this.remove}
+          />
+        </div>
+      );
+    });
     return (
       <div>
-        <Input.Group compact>
-
-          <Select
-            value={storeField}
-            placeholder="Select store field"
-            style={{ width: '20%' }}
-            onChange={this.handleStoreFieldChange}
-          >
-            {storeFields.map(field => (
-              <Select.Option key={field.value} value={field.value}>
-                {field.text}
-              </Select.Option>
-            ))}
-
-          </Select>
-
-          <Select
-            value={feedHeading}
-            placeholder="Select feed heading"
-            style={{ width: '30%' }}
-            onChange={this.handleFeedHeadingChange}
-          >
-            {storeFields.map(field => (
-              <Select.Option key={field.value} value={field.value}>
-                {field.text}
-              </Select.Option>
-            ))}
-
-          </Select>
-        </Input.Group>
+        <Row>
+          {formItems}
+        </Row>
+        <Row>
+          <Button type="dashed" onClick={this.add} style={{ width: '60%' }}>
+            <Icon type="plus" /> Add field
+          </Button>
+          <Form.Item style={{ textAlign: 'right' }} />
+        </Row>
       </div>
     );
   }
 
-  handleStoreFieldChange = storeField => {
-    if (!('value' in this.props)) {
-      this.setState({ storeField });
-    }
-    this.triggerChange({ storeField });
+  add = () => {
+    const { form } = this.props;
+    // can use data-binding to get
+    const fieldMappings = form.getFieldValue('fieldMappings');
+    console.log('fieldMappings:', fieldMappings);
+    // const nextKeys = keys.concat(new Date());
+    // can use data-binding to set
+    // important! notify form to detect changes
+    form.setFieldsValue({
+      fieldMappings: [...fieldMappings, { key: new Date().toString() }]
+    });
   };
-  handleFeedHeadingChange = feedHeading => {
-    if (!('value' in this.props)) {
-      this.setState({ feedHeading });
+
+  remove = k => {
+    console.log('remove > k:', k);
+    const { form } = this.props;
+    // can use data-binding to get
+    const fieldMappings = form.getFieldValue('fieldMappings');
+    // We need at least one field
+    if (fieldMappings.length === requiredFields.length) {
+      return;
     }
-    this.triggerChange({ feedHeading });
+
+    // can use data-binding to set
+    form.setFieldsValue({
+      fieldMappings: fieldMappings.filter(key => key.key !== k)
+    });
   };
-  triggerChange = changedValue => {
-    // Should provide an event to pass value to Form.
-    const onChange = this.props.onChange;
-    if (onChange) {
-      onChange(Object.assign({}, this.state, changedValue));
-    }
-  };
-}
 
-export default class FieldMappings extends PureComponent {
-  render() {
-    console.log('FieldMappings render');
-    const { getFieldDecorator } = this.props.form;
-    const formItemLayout = {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 6 }
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 14 }
-      }
-    };
-
-    return (
-      <Form.Item>
-        {getFieldDecorator('field1', {
-          initialValue: {},
-          rules: [{ validator: this.checkField }]
-        })(<FieldMapping />)}
-
-      </Form.Item>
-    );
-  }
   checkField = (rule, value, callback) => {
     // console.log('checkField > rule:', rule);
     console.log('checkField > value:', value);
-    const { storeField = '', feedHeading = '' } = value;
+    const { storeField = '', feedHeading = '', key, oldKey } = value;
+
+    const { form } = this.props;
+    const fieldMappings = form.getFieldValue('fieldMappings');
+    form.setFieldsValue({
+      fieldMappings: fieldMappings.map(fm => {
+        // console.log('key:', key);
+        // console.log('oldKey:', oldKey);
+        if (key !== oldKey && fm.key === oldKey) {
+          console.log('CHANGE IT');
+          fm = { key, storeField };
+        }
+        if (fm.key === key && feedHeading.length > 0) {
+          fm.feedHeading = feedHeading;
+        }
+        return fm;
+      })
+    });
     if (storeField.length === 0) {
       callback('Please select a store field');
       return;

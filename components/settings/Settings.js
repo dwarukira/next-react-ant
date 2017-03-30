@@ -1,5 +1,5 @@
 import { PureComponent } from 'react';
-import { Steps, Button, message, Icon, Form } from 'antd';
+import { Steps, Button, message, Icon, Form, Affix } from 'antd';
 import Breadcrumb from '../Breadcrumb';
 import FieldMappings from './FieldMappings';
 
@@ -11,11 +11,11 @@ const steps = ({ step, form } = {}) => {
     },
     {
       title: 'Source File',
-      content: '2nd content'
+      content: 'Add file'
     },
     {
-      title: 'Advanced Settings',
-      content: 'Last-content'
+      title: 'Advanced',
+      content: 'Advanced settings'
     },
     {
       title: 'Summary',
@@ -39,14 +39,21 @@ export default class Settings extends PureComponent {
   };
   render() {
     const { feed: { title } } = this.props;
-    const { current } = this.state;
+    const { current, status } = this.state;
 
     return (
       <div>
         <Breadcrumb crumbs={[{ title: 'Feed Settings' }, { title }]} />
 
         <div style={{ padding: '20px' }}>
-          <Steps current={current}>
+          <Affix offsetTop={65} style={{}} />
+          <Steps
+            current={current}
+            status={status || undefined}
+            style={{
+              padding: '8px 0'
+            }}
+          >
             {steps().map(item => (
               <Steps.Step key={item.title} title={item.title} />
             ))}
@@ -54,8 +61,9 @@ export default class Settings extends PureComponent {
           <div
             className="steps-content"
             style={{
-              marginTop: '16px',
-              textAlign: 'center'
+              textAlign: 'center',
+              marginTop: '24px',
+              minHeight: 300
             }}
           >
             <WrapperForm
@@ -91,15 +99,17 @@ export default class Settings extends PureComponent {
   }
   next = e => {
     e.preventDefault();
-    console.log('this.stepForm:', this.stepForm);
+    // console.log('this.stepForm:', this.stepForm);
     this.stepForm.validateFields((err, values) => {
       console.log('err of form: ', err);
-      console.log('Received values of form: ', values);
+      // console.log('Received values of form: ', values);
       if (!err) {
         console.log('Validate OK');
         const current = this.state.current + 1;
-        this.setState({ current });
+        this.setState({ status: 'finish' });
+        this.setState({ current, status: 'process' });
       } else {
+        this.setState({ status: 'error' });
         console.log('Validate FAIL');
       }
     });
