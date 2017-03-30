@@ -10,7 +10,7 @@ export default () => (
   <div>
     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
     <style dangerouslySetInnerHTML={{ __html: antStyle }} />
-    <App breadcrumb="Feeds">
+    <App>
       <Dashboard />
     </App>
   </div>

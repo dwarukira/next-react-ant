@@ -1,6 +1,7 @@
 import { PureComponent } from 'react';
 import { Row, Col, Button, Icon } from 'antd';
 import _ from 'lodash';
+import Breadcrumb from './Breadcrumb';
 import Schedule from './Schedule';
 import { feeds } from './util';
 
@@ -44,6 +45,7 @@ export default class Dashboard extends PureComponent {
 
     return (
       <div>
+        <Breadcrumb crumbs={[{ title: 'Feeds' }]} />
         {feeds.map(feed => (
           <Row
             key={feed.id}
