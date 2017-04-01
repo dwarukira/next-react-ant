@@ -135,7 +135,7 @@ export default class Dashboard extends PureComponent {
                   icon="edit"
                   style={styleButton}
                   onClick={e => {
-                    window.location.href = 'settings';
+                    window.location.href = `settings?id=${feed.id}`;
                   }}
                 />
                 <Button

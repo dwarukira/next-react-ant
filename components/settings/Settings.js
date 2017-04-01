@@ -2,6 +2,7 @@ import { PureComponent } from 'react';
 import { Steps, Button, message, Icon, Form, Affix } from 'antd';
 import Breadcrumb from '../Breadcrumb';
 import FieldMappings from './FieldMappings';
+import { feeds } from '../util';
 
 const steps = ({ step, form } = {}) => {
   const _steps = [
@@ -38,8 +39,10 @@ export default class Settings extends PureComponent {
     current: 0
   };
   render() {
-    const { feed: { title } } = this.props;
+    const { url: { query: { id } } } = this.props;
     const { current, status } = this.state;
+    const feed = feeds.filter(feed => feed.id === id);
+    const { title = '' } = (feed.length > 0 && feed[0]) || {};
 
     return (
       <div>

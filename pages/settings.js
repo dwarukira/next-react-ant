@@ -7,12 +7,12 @@ import Settings from '../components/settings/Settings';
 
 import { feeds } from '../components/util';
 
-export default () => (
+export default props => (
   <div>
     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
     <style dangerouslySetInnerHTML={{ __html: antStyle }} />
     <App>
-      <Settings feed={feeds[0]} />
+      <Settings {...props} />
     </App>
   </div>
 );
