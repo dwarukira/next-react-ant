@@ -3,7 +3,11 @@ import { Row, Col, Button, Icon } from 'antd';
 import Breadcrumb from './Breadcrumb';
 import Schedule from './Schedule';
 import { feeds } from './util';
-import { fromJS, toJS } from 'immutable';
+import {
+  makeScheduleVisible,
+  makeScheduleHidden,
+  toggleFeedRunning
+} from './Dashboard.state';
 
 const SIZES = {
   big: '2rem',
@@ -29,26 +33,6 @@ let styleFeedType = {
 };
 
 const Image = ({ size, url }) => <img style={styleImage(size)} src={url} />;
-
-// Functional setState
-const makeScheduleVisible = (state, props) => ({
-  popupScheduleVisible: true
-});
-
-const makeScheduleHidden = (state, props) => ({
-  popupScheduleVisible: false
-});
-
-const toggleFeedRunning = feed =>
-  (state, props) => {
-    const imFeeds = fromJS(state.feeds);
-    const index = imFeeds.findIndex(f => f.get('id') === feed.id);
-    return {
-      feeds: imFeeds
-        .setIn([index, 'isRunning'], !state.feeds[index].isRunning)
-        .toJS()
-    };
-  };
 
 export default class Dashboard extends PureComponent {
   state = {
