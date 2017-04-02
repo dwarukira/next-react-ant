@@ -15,7 +15,7 @@
     "babel-plugin-module-resolver": "2.5.0",
     "babel-plugin-wrap-in-js": "^1.1.0",
     "glob": "7.1.1",
-    "lodash": "^4.17.4",
+    "immutable": "^3.8.1",
     "next": "^2.0.0-beta.18",
     "node-sass": "^4.4.0",
     "normalize.css": "5.0.0",

@@ -1,9 +1,9 @@
 import { PureComponent } from 'react';
 import { Row, Col, Button, Icon } from 'antd';
-import _ from 'lodash';
 import Breadcrumb from './Breadcrumb';
 import Schedule from './Schedule';
 import { feeds } from './util';
+import { fromJS, toJS } from 'immutable';
 
 const SIZES = {
   big: '2rem',
@@ -41,12 +41,12 @@ const makeScheduleHidden = (state, props) => ({
 
 const toggleFeedRunning = feed =>
   (state, props) => {
-    const prevFeeds = [...state.feeds];
-    var index = _.findIndex(prevFeeds, { id: feed.id });
-    feed.isRunning = !prevFeeds[index].isRunning;
-    prevFeeds.splice(index, 1, { ...feed });
+    const imFeeds = fromJS(state.feeds);
+    const index = imFeeds.findIndex(f => f.get('id') === feed.id);
     return {
-      feeds: prevFeeds
+      feeds: imFeeds
+        .setIn([index, 'isRunning'], !state.feeds[index].isRunning)
+        .toJS()
     };
   };
 
