@@ -25,6 +25,42 @@ const styleCheckAll = {
   marginLeft: '10px'
 };
 
+const hours = [...new Array(24)].map((v, i) => {
+  return (i + 1).toString();
+});
+const minutes = [...new Array(60)].map((v, i) => {
+  return (i + 1).toString();
+});
+
+// Functional setState
+const updateFrequencyValue = frequencyValue =>
+  (state, props) => ({
+    frequencyValue
+  });
+
+const updateFrequencyType = frequencyType =>
+  (state, props) => ({ frequencyType, frequencyValue: '1' });
+
+const showModalLoading = ModalText =>
+  (state, props) => ({ confirmLoading: true, ModalText });
+
+const hideModalLoading = () => (state, props) => ({ confirmLoading: false });
+
+const updateDaysChange = (checkedList, plainOptions) =>
+  (state, props) => ({
+    checkedList,
+    indeterminate: !!checkedList.length &&
+      checkedList.length < plainOptions.length,
+    checkAll: checkedList.length === plainOptions.length
+  });
+
+const updateAllDaysChange = (targetChecked, plainOptions) =>
+  (state, props) => ({
+    checkedList: targetChecked ? plainOptions : [],
+    indeterminate: false,
+    checkAll: targetChecked
+  });
+
 class Schedule extends PureComponent {
   state = {
     checkedList: defaultCheckedList,
@@ -33,22 +69,22 @@ class Schedule extends PureComponent {
   };
 
   render() {
-    const { visible = false } = this.props;
+    const {
+      visible = false,
+      onChange = () => {},
+      form: { getFieldDecorator, setFieldsValue = () => {} }
+    } = this.props;
     const {
       startTime = '0',
       endTime = '0',
       frequencyType = 'minutes',
-      frequencyValue = '1'
+      frequencyValue = '1',
+      confirmLoading,
+      indeterminate,
+      checkAll,
+      checkedList
     } = this.state;
-    const hours = [...new Array(24)].map((v, i) => {
-      return (i + 1).toString();
-    });
-    const minutes = [...new Array(60)].map((v, i) => {
-      return (i + 1).toString();
-    });
     const isFrequencyMinutes = frequencyType === 'minutes';
-
-    const { getFieldDecorator } = this.props.form;
 
     return (
       <div>
@@ -56,8 +92,8 @@ class Schedule extends PureComponent {
           title="How frequent should this feed run?"
           visible={visible}
           onOk={this.handleOk}
-          confirmLoading={this.state.confirmLoading}
-          onCancel={this.handleCancel}
+          confirmLoading={confirmLoading}
+          onCancel={onChange}
         >
           <Form>
 
@@ -73,9 +109,13 @@ class Schedule extends PureComponent {
                   Days{`   `}
                   <Checkbox
                     style={styleCheckAll}
-                    indeterminate={this.state.indeterminate}
-                    onChange={this.onCheckAllDaysChange}
-                    checked={this.state.checkAll}
+                    indeterminate={indeterminate}
+                    onChange={e => {
+                      this.setState(
+                        updateAllDaysChange(e.target.checked, plainOptions)
+                      );
+                    }}
+                    checked={checkAll}
                   >
                     Everyday
                   </Checkbox>
@@ -83,8 +123,10 @@ class Schedule extends PureComponent {
 
                 <CheckboxGroup
                   options={plainOptions}
-                  value={this.state.checkedList}
-                  onChange={this.onChangeDays}
+                  value={checkedList}
+                  onChange={checkedList => {
+                    this.setState(updateDaysChange(checkedList, plainOptions));
+                  }}
                 />
               </Col>
             </Row>
@@ -96,9 +138,7 @@ class Schedule extends PureComponent {
                   style={styleFormControl}
                   value={frequencyValue}
                   onChange={frequencyValue => {
-                    this.setState({
-                      frequencyValue
-                    });
+                    this.setState(updateFrequencyValue(frequencyValue));
                   }}
                 >
                   {isFrequencyMinutes
@@ -116,10 +156,7 @@ class Schedule extends PureComponent {
                   style={styleFormControl}
                   value={frequencyType}
                   onChange={frequencyType => {
-                    this.setState({
-                      frequencyType,
-                      frequencyValue: '1'
-                    });
+                    this.setState(updateFrequencyType(frequencyType));
                   }}
                 >
                   <Option value="minutes">minute(s)</Option>
@@ -133,7 +170,11 @@ class Schedule extends PureComponent {
                   label="Start Time"
                   field="startTime"
                   getFieldDecorator={getFieldDecorator}
-                  onChange={this.onChangeStartTime}
+                  onChange={startTime => {
+                    setFieldsValue({
+                      startTime
+                    });
+                  }}
                 />
               </Col>
               <Col span={12}>
@@ -141,7 +182,11 @@ class Schedule extends PureComponent {
                   label="End Time"
                   field="endTime"
                   getFieldDecorator={getFieldDecorator}
-                  onChange={this.onChangeEndTime}
+                  onChange={endTime => {
+                    setFieldsValue({
+                      endTime
+                    });
+                  }}
                 />
               </Col>
             </Row>
@@ -158,54 +203,17 @@ class Schedule extends PureComponent {
       console.log('Received values of form: ', values);
       if (!err) {
         const { onChange = () => {} } = this.props;
-        this.setState({
-          ModalText: 'The modal dialog will be closed after two seconds',
-          confirmLoading: true
-        });
+        this.setState(
+          showModalLoading('The modal dialog will be closed after two seconds')
+        );
         setTimeout(
           () => {
-            onChange({
-              popupScheduleVisible: false
-            });
-            this.setState({
-              confirmLoading: false
-            });
+            onChange();
+            this.setState(hideModalLoading);
           },
           2000
         );
-      } else {
       }
-    });
-  };
-  handleCancel = () => {
-    const { onChange = () => {} } = this.props;
-    onChange({
-      popupScheduleVisible: false
-    });
-  };
-  onChangeStartTime = startTime => {
-    // this.setState({ startTime });
-    this.props.form.setFieldsValue({
-      startTime
-    });
-  };
-  onChangeEndTime = endTime => {
-    this.setState({ endTime });
-  };
-
-  onChangeDays = checkedList => {
-    this.setState({
-      checkedList,
-      indeterminate: !!checkedList.length &&
-        checkedList.length < plainOptions.length,
-      checkAll: checkedList.length === plainOptions.length
-    });
-  };
-  onCheckAllDaysChange = e => {
-    this.setState({
-      checkedList: e.target.checked ? plainOptions : [],
-      indeterminate: false,
-      checkAll: e.target.checked
     });
   };
 }

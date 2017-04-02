@@ -57,6 +57,14 @@ const feedHeadings = [
   }
 ];
 
+// Functional setState
+const updateFeedHeading = feedHeading => (state, props) => ({ feedHeading });
+
+const updateStoreFieldAndKey = storeField =>
+  (state, props) => ({ storeField, key: storeField });
+
+const updateWithNextProps = nextProps => (state, props) => nextProps;
+
 class _FieldMapping extends PureComponent {
   constructor(props) {
     super(props);
@@ -73,15 +81,12 @@ class _FieldMapping extends PureComponent {
     // Should be a controlled component.
     console.log('cwr > nextProps:', nextProps);
     if ('value' in nextProps) {
-      const value = nextProps.value;
-      this.setState(value);
+      this.setState(updateWithNextProps(nextProps.value));
     }
   }
   render() {
-    const { storeField, feedHeading, key } = this.state;
     const { storeFieldDisabled = false, onRemove } = this.props;
-    console.log('FieldMapping > this.props:', this.props);
-    // console.log('FieldMapping > onRemove:', onRemove);
+    const { storeField, feedHeading, key } = this.state;
     return (
       <div>
         <Input.Group compact style={{ width: '95%', display: 'inline-block' }}>
@@ -106,7 +111,12 @@ class _FieldMapping extends PureComponent {
             value={feedHeading}
             placeholder="Select feed heading"
             style={{ width: '55%', verticalAlign: 'top' }}
-            onChange={this.handleFeedHeadingChange}
+            onChange={feedHeading => {
+              if (!('value' in this.props)) {
+                this.setState(updateFeedHeading(feedHeading));
+              }
+              this.triggerChange({ feedHeading });
+            }}
           >
             {feedHeadings.map(field => (
               <Select.Option key={field.value} value={field.value}>
@@ -151,29 +161,22 @@ class _FieldMapping extends PureComponent {
 
   handleStoreFieldChange = storeField => {
     if (!('value' in this.props)) {
-      this.setState({ storeField, key: storeField });
+      this.setState(updateStoreFieldAndKey(storeField));
     }
-    const { value } = this.props;
+    const { value: { key: oldKey } } = this.props;
     this.triggerChange({
       storeField,
       key: storeField,
-      oldKey: value.key
+      oldKey
     });
   };
-  handleFeedHeadingChange = feedHeading => {
-    if (!('value' in this.props)) {
-      this.setState({ feedHeading });
-    }
-    this.triggerChange({ feedHeading });
-  };
+
   triggerChange = changedValue => {
     // Should provide an event to pass value to Form.
-    console.log('Triggerchange > this.state:', this.state);
-    console.log('Triggerchange > changedValue:', changedValue);
-    const onChange = this.props.onChange;
-    if (onChange) {
-      onChange(Object.assign({}, this.state, changedValue));
-    }
+    // console.log('Triggerchange > this.state:', this.state);
+    // console.log('Triggerchange > changedValue:', changedValue);
+    const { onChange = () => {} } = this.props;
+    onChange(Object.assign({}, this.state, changedValue));
   };
 }
 
@@ -185,7 +188,8 @@ class FieldMapping extends PureComponent {
       initialValue = {},
       initialValue: { key }
     } = this.props;
-    console.log('initialValue:', initialValue);
+    // console.log('initialValue:', initialValue);
+    console.log('FieldMapping > props:', this.props);
     return (
       <Col xs={{ span: 24 }}>
         <Form.Item style={{ marginBottom: 20 }}>

@@ -30,14 +30,30 @@ let styleFeedType = {
 
 const Image = ({ size, url }) => <img style={styleImage(size)} src={url} />;
 
+// Functional setState
+const makeScheduleVisible = (state, props) => ({
+  popupScheduleVisible: true
+});
+
+const makeScheduleHidden = (state, props) => ({
+  popupScheduleVisible: false
+});
+
+const toggleFeedRunning = feed =>
+  (state, props) => {
+    const prevFeeds = [...state.feeds];
+    var index = _.findIndex(prevFeeds, { id: feed.id });
+    feed.isRunning = !prevFeeds[index].isRunning;
+    prevFeeds.splice(index, 1, { ...feed });
+    return {
+      feeds: prevFeeds
+    };
+  };
+
 export default class Dashboard extends PureComponent {
   state = {
     popupScheduleVisible: false,
     feeds
-  };
-
-  handleScheduleChange = newState => {
-    this.setState(newState);
   };
 
   render() {
@@ -117,15 +133,7 @@ export default class Dashboard extends PureComponent {
                   icon={feed.isRunning ? 'pause' : 'play-circle'}
                   style={styleButton}
                   onClick={() => {
-                    this.setState((prevState, props) => {
-                      const prevFeeds = [...prevState.feeds];
-                      var index = _.findIndex(prevFeeds, { id: feed.id });
-                      feed.isRunning = !prevFeeds[index].isRunning;
-                      prevFeeds.splice(index, 1, { ...feed });
-                      return {
-                        feeds: prevFeeds
-                      };
-                    });
+                    this.setState(toggleFeedRunning(feed));
                   }}
                 />
 
@@ -149,24 +157,22 @@ export default class Dashboard extends PureComponent {
                   type="default"
                   icon="calendar"
                   style={styleButton}
-                  onClick={e => {
-                    this.setState({
-                      popupScheduleVisible: true
-                    });
+                  onClick={() => {
+                    this.setState(makeScheduleVisible);
                   }}
                 >
                   Schedule
                 </Button>
                 <Schedule
                   visible={popupScheduleVisible}
-                  onChange={this.handleScheduleChange.bind(this)}
+                  onChange={() => {
+                    this.setState(makeScheduleHidden);
+                  }}
                 />
               </div>
-
             </Col>
           </Row>
         ))}
-
       </div>
     );
   }

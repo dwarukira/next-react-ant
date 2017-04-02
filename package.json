@@ -1,5 +1,5 @@
 {
-  "name": "next.js-css-global-style-test",
+  "name": "SS v2",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start"
   },
-  "author": "Davide Bertola <dade@dadeb.it>",
+  "author": "Cloudcoder",
   "license": "ISC",
   "dependencies": {
     "antd": "^2.8.3",

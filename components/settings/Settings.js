@@ -34,6 +34,18 @@ const WrapperForm = Form.create()(({ steps, step, form }) => (
   </Form>
 ));
 
+// Functional setState
+const previousStep = (state, props) => ({ current: state.current - 1 });
+
+const showStepError = (state, props) => ({ status: 'error' });
+const updateStepComplete = (state, props) => ({
+  status: 'finish'
+});
+const updateStepInProgress = (state, props) => ({
+  status: 'process',
+  current: state.current + 1
+});
+
 export default class Settings extends PureComponent {
   state = {
     current: 0
@@ -82,7 +94,10 @@ export default class Settings extends PureComponent {
             }}
           >
             {this.state.current > 0 &&
-              <Button style={{ marginRight: 8 }} onClick={() => this.prev()}>
+              <Button
+                style={{ marginRight: 8 }}
+                onClick={() => this.setState(previousStep)}
+              >
                 Previous
               </Button>}
 
@@ -102,23 +117,16 @@ export default class Settings extends PureComponent {
   }
   next = e => {
     e.preventDefault();
-    // console.log('this.stepForm:', this.stepForm);
     this.stepForm.validateFields((err, values) => {
-      console.log('err of form: ', err);
-      // console.log('Received values of form: ', values);
+      // console.log('err of form: ', err);
       if (!err) {
         console.log('Validate OK');
-        const current = this.state.current + 1;
-        this.setState({ status: 'finish' });
-        this.setState({ current, status: 'process' });
+        this.setState(updateStepComplete);
+        this.setState(updateStepInProgress);
       } else {
-        this.setState({ status: 'error' });
+        this.setState(showStepError);
         console.log('Validate FAIL');
       }
     });
   };
-  prev() {
-    const current = this.state.current - 1;
-    this.setState({ current });
-  }
 }
