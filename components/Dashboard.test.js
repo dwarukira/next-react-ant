@@ -23,6 +23,6 @@ test('toggle feed running', () => {
   };
   const feed = state.feeds[0];
   expect(toggleFeedRunning(feed)(state)).toEqual({
-    feeds: fromJS(state.feeds).setIn([0, 'isRunning'], true).toJS()
+    feeds: fromJS(state.feeds).setIn([0, 'enabled'], true).toJS()
   });
 });
