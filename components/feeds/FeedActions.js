@@ -1,31 +1,8 @@
-import { Button, Icon, Switch } from 'antd';
+import { Button, Icon, Switch, Tooltip } from 'antd';
 
 let styleButton = {
   marginRight: '8px'
 };
-
-const _ToggleFeedButton = (
-  { feed, onFeedChange = () => {}, large, style = {} }
-) => (
-  <Button
-    type="primary"
-    {...large ? {} : { shape: 'circle' }}
-    // shape="circle"
-    icon={feed.isRunning ? 'pause' : 'play-circle'}
-    style={{
-      ...styleButton,
-      ...(large
-        ? {
-            fontSize: '1.5rem',
-            padding: '0 8px'
-          }
-        : {}),
-      ...style
-    }}
-    size="large"
-    onClick={() => onFeedChange(feed)}
-  />
-);
 
 const ToggleFeedButton = ({ feed, onFeedChange = () => {}, style = {} }) => (
   <Switch
@@ -37,15 +14,17 @@ const ToggleFeedButton = ({ feed, onFeedChange = () => {}, style = {} }) => (
 );
 
 const FeedSettingsButton = ({ feed, style = {} }) => (
-  <Button
-    type="default"
-    shape="circle"
-    icon="setting"
-    style={{ ...styleButton, ...style }}
-    onClick={e => {
-      window.location.href = `settings?id=${feed.id}`;
-    }}
-  />
+  <Tooltip title="Feed settings" overlayStyle={{ fontSize: '.8rem' }}>
+    <Button
+      type="default"
+      shape="circle"
+      icon="setting"
+      style={{ ...styleButton, ...{ border: 0 }, ...style }}
+      onClick={e => {
+        window.location.href = `settings?id=${feed.id}`;
+      }}
+    />
+  </Tooltip>
 );
 
 const DeleteFeedButton = ({ feed }) => (
@@ -68,24 +47,24 @@ const ScheduleButton = ({ style = {}, onClick = () => {} }) => (
 
 const FeedScheduleInfo = ({ feed, onClick }) => (
   <span>
-    Schedule
+    <span style={{ fontWeight: 600 }}>Schedule</span>
     <ScheduleButton onClick={onClick} style={{ marginLeft: 5 }} />
-    <br />{feed.schedule}
-
+    <br /><span style={{ fontSize: '.8rem' }}>{feed.schedule}</span>
   </span>
 );
 
 const SIZES = {
+  normal: '1.5rem',
   big: '2rem',
   large: '3rem',
   huge: '4rem',
   massive: '5rem'
 };
 
-const styleImage = size => ({ width: SIZES[size] || '100%' });
+const styleImage = size => ({ fontSize: SIZES[size] });
 
-const Image = ({ size, url, style = {} }) => (
-  <img style={{ ...styleImage(size), ...style }} src={url} />
+const Image = ({ size = 'normal', url, style = {} }) => (
+  <Icon style={{ ...styleImage(size), ...style }} type={url} />
 );
 
 export {

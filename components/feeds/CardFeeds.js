@@ -1,5 +1,5 @@
 import { PureComponent } from 'react';
-import { Card, Col, Row, Badge } from 'antd';
+import { Card, Col, Row, Badge, Tag, Timeline, Icon } from 'antd';
 import {
   ToggleFeedButton,
   FeedSettingsButton,
@@ -25,14 +25,22 @@ const FeedStatus = ({ feed }) => (
 );
 
 const LogActivity = ({ log, style = {} }) => (
-  <Row style={style}>
-    <Col span={22}>
-      <DateTime datetime={log.date} key={log.id} />
-    </Col>
-    <Col span={2}>
-      <Badge count={log.total_variants} style={style} />
-    </Col>
-  </Row>
+  <Timeline>
+    <Timeline.Item
+      dot={<Icon type="clock-circle-o" style={{ fontSize: '.9rem' }} />}
+    >
+      <DateTime
+        // style={{ fontSize: '.8rem' }}
+        datetime={log.date}
+        // key={log.id}
+      />
+      {' '}
+      <Badge
+        count={`${log.total_variants} variants`}
+        style={{ fontSize: '.7rem' }}
+      />
+    </Timeline.Item>
+  </Timeline>
 );
 
 export default class CardFeeds extends PureComponent {
@@ -44,31 +52,50 @@ export default class CardFeeds extends PureComponent {
           {feeds.map(feed => (
             <Col span={8} key={feed.id} style={{ marginBottom: '30px' }}>
               <Card
-                style={{ width: 240 }}
                 bodyStyle={{ padding: 0 }}
                 title={
                   <span>
-                    <Col span={5}>
+                    <Col span={17} style={{ textAlign: 'left' }}>
                       <Image
                         url={feed.from}
                         style={{
-                          top: '5px',
-                          position: 'relative'
+                          top: '3px',
+                          position: 'relative',
+                          marginRight: 8
                         }}
                       />
-                    </Col>
-                    <Col span={12}>
                       {feed.title}
+
                     </Col>
 
                   </span>
                 }
                 extra={
-                  <FeedSettingsButton
-                    feed={feed}
-                    onFeedChange={onFeedChange}
-                    style={{ marginRight: 0, top: '-4px' }}
-                  />
+                  <div
+                    style={{
+                      top: '-4px',
+                      position: 'relative',
+                      textTransform: 'capitalize'
+                    }}
+                  >
+                    {feed.status &&
+                      feed.status.length > 0 &&
+                      <Tag
+                        style={{
+                          fontSize: '.75rem',
+                          position: 'relative',
+                          top: '-2px'
+                        }}
+                        color="green"
+                      >
+                        {feed.status}
+                      </Tag>}
+                    <FeedSettingsButton
+                      feed={feed}
+                      onFeedChange={onFeedChange}
+                      style={{ marginRight: 0 }}
+                    />
+                  </div>
                 }
               >
 
@@ -85,20 +112,11 @@ export default class CardFeeds extends PureComponent {
                     </Col>
                   </Row>
                   <Divider />
-                  <Row type="flex" justify="space-around" align="middle">
-                    <Col
-                      span={24}
-                      style={{
-                        // textAlign: 'left'
-                      }}
-                    >
-                      {feed.logs &&
-                        feed.logs.length > 0 &&
-                        feed.logs.map(log => (
-                          <LogActivity log={log} key={log.id} />
-                        ))}
-                    </Col>
-                  </Row>
+                  {feed.logs &&
+                    feed.logs.length > 0 &&
+                    feed.logs.map(log => (
+                      <LogActivity log={log} key={log.id} />
+                    ))}
                   <Divider />
                   <Row type="flex" justify="space-around" align="middle">
 
@@ -115,13 +133,7 @@ export default class CardFeeds extends PureComponent {
 
                     </Col>
                     <Col span={16}>
-                      <small>
-                        <FeedScheduleInfo
-                          feed={feed}
-                          onClick={onScheduleClick}
-                        />
-                      </small>
-
+                      <FeedScheduleInfo feed={feed} onClick={onScheduleClick} />
                     </Col>
                   </Row>
                   <Divider />
