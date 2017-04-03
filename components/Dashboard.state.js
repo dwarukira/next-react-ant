@@ -13,7 +13,7 @@ const toggleFeedRunning = feed =>
     const index = imFeeds.findIndex(f => f.get('id') === feed.id);
     return {
       feeds: imFeeds
-        .setIn([index, 'isRunning'], !state.feeds[index].isRunning)
+        .setIn([index, 'enabled'], !state.feeds[index].enabled)
         .toJS()
     };
   };

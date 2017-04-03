@@ -119,7 +119,7 @@ class _FieldMapping extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     // Should be a controlled component.
-    console.log('cwr > nextProps:', nextProps);
+    // console.log('cwr > nextProps:', nextProps);
     if ('value' in nextProps) {
       this.setState(updateWithNextProps(nextProps.value));
     }
@@ -240,7 +240,7 @@ class FieldMapping extends PureComponent {
       initialValue: { key }
     } = this.props;
     // console.log('initialValue:', initialValue);
-    console.log('FieldMapping > props:', this.props);
+    // console.log('FieldMapping > props:', this.props);
     return (
       <Col xs={{ span: 24 }}>
         <Form.Item style={{ marginBottom: 20 }}>

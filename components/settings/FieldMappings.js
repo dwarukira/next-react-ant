@@ -25,7 +25,6 @@ const requiredFields = [
 
 export default class FieldMappings extends PureComponent {
   render() {
-    // console.log('FieldMappings render');
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
 
@@ -38,15 +37,14 @@ export default class FieldMappings extends PureComponent {
       JSON.stringify(fieldMappings, null, 2)
     );
 
-    const formItems = fieldMappings.map((k, index) => {
-      // console.log('formItems k:', k);
+    const formItems = fieldMappings.map(fm => {
       return (
-        <div key={k.key}>
+        <div key={fm.key}>
           <FieldMapping
-            initialValue={k}
+            initialValue={fm}
             checkField={this.checkField}
             form={form}
-            storeFieldDisabled={k.required}
+            storeFieldDisabled={fm.required}
             onRemove={this.remove}
           />
         </div>
@@ -71,8 +69,7 @@ export default class FieldMappings extends PureComponent {
     const { form } = this.props;
     // can use data-binding to get
     const fieldMappings = form.getFieldValue('fieldMappings');
-    console.log('fieldMappings:', fieldMappings);
-    // const nextKeys = keys.concat(new Date());
+    // console.log('fieldMappings:', fieldMappings);
     // can use data-binding to set
     // important! notify form to detect changes
     form.setFieldsValue({
@@ -80,8 +77,7 @@ export default class FieldMappings extends PureComponent {
     });
   };
 
-  remove = k => {
-    console.log('remove > k:', k);
+  remove = keyToRemove => {
     const { form } = this.props;
     // can use data-binding to get
     const fieldMappings = form.getFieldValue('fieldMappings');
@@ -92,7 +88,7 @@ export default class FieldMappings extends PureComponent {
 
     // can use data-binding to set
     form.setFieldsValue({
-      fieldMappings: fieldMappings.filter(key => key.key !== k)
+      fieldMappings: fieldMappings.filter(fm => fm.key !== keyToRemove)
     });
   };
 
@@ -107,10 +103,11 @@ export default class FieldMappings extends PureComponent {
       fieldMappings: fieldMappings.map(fm => {
         // console.log('key:', key);
         // console.log('oldKey:', oldKey);
+        // updateStoreFieldInFieldMapping
         if (key !== oldKey && fm.key === oldKey) {
-          console.log('CHANGE IT');
           fm = { key, storeField };
         }
+        // updateFeedHeadingInFieldMapping
         if (fm.key === key && feedHeading.length > 0) {
           fm.feedHeading = feedHeading;
         }
