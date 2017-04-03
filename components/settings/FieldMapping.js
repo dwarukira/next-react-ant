@@ -1,36 +1,76 @@
 import { PureComponent } from 'react';
 import { Select, Input, Form, Col, Icon } from 'antd';
 
+// const storeFields = [
+//   {
+//     required: true,
+//     value: 'sku',
+//     text: 'SKU'
+//   },
+//   {
+//     required: true,
+//     value: 'price',
+//     text: 'Price'
+//   },
+//   {
+//     required: true,
+//     value: 'title',
+//     text: 'Title'
+//   },
+//   {
+//     required: false,
+//     value: 'vendor',
+//     text: 'Vendor'
+//   },
+//   {
+//     required: false,
+//     value: 'barcode',
+//     text: 'Barcode'
+//   },
+//   {
+//     required: false,
+//     value: 'product_type',
+//     text: 'Product Type'
+//   }
+// ];
+
 const storeFields = [
   {
-    required: true,
-    value: 'sku',
-    text: 'SKU'
+    groupName: 'Required',
+    groupData: [
+      {
+        disabled: true,
+        value: 'sku',
+        text: 'SKU'
+      },
+      {
+        disabled: true,
+        value: 'price',
+        text: 'Price'
+      },
+      {
+        disabled: true,
+        value: 'title',
+        text: 'Title'
+      }
+    ]
   },
   {
-    required: true,
-    value: 'price',
-    text: 'Price'
-  },
-  {
-    required: true,
-    value: 'title',
-    text: 'Title'
-  },
-  {
-    required: false,
-    value: 'vendor',
-    text: 'Vendor'
-  },
-  {
-    required: false,
-    value: 'barcode',
-    text: 'Barcode'
-  },
-  {
-    required: false,
-    value: 'product_type',
-    text: 'Product Type'
+    groupName: 'Normal',
+    groupData: [
+      {
+        value: 'vendor',
+        text: 'Vendor'
+      },
+      {
+        value: 'barcode',
+        text: 'Barcode'
+      },
+      {
+        value: 'product_type',
+        text: 'Product Type'
+      }
+    ]
   }
 ];
 
@@ -99,10 +139,21 @@ class _FieldMapping extends PureComponent {
             disabled={storeFieldDisabled}
             combobox={storeFieldDisabled}
           >
-            {storeFields.map(field => (
-              <Select.Option key={field.value} value={field.value}>
-                {field.text}
-              </Select.Option>
+            {storeFields.map(fieldGroup => (
+              <Select.OptGroup
+                key={fieldGroup.groupName}
+                label={fieldGroup.groupName}
+              >
+                {fieldGroup.groupData.map(field => (
+                  <Select.Option
+                    key={field.value}
+                    value={field.value}
+                    disabled={field.disabled}
+                  >
+                    {field.text}
+                  </Select.Option>
+                ))}
+              </Select.OptGroup>
             ))}
           </Select>
 
