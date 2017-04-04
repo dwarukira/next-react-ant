@@ -31,8 +31,10 @@ const DeleteFeedButton = ({ feed }) => (
   <Button type="danger" shape="circle" icon="delete" style={styleButton} />
 );
 
-const RunNowButton = ({ size }) => (
-  <Button type="default" style={styleButton} size={size}>Run Now</Button>
+const RunNowButton = ({ size, disabled = false }) => (
+  <Button type="default" style={styleButton} size={size} {...{ disabled }}>
+    Run Now
+  </Button>
 );
 
 const ScheduleButton = ({ style = {}, onClick = () => {} }) => (

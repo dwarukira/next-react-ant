@@ -2,7 +2,9 @@ import { fromJS, toJS } from 'immutable';
 import {
   makeScheduleVisible,
   makeScheduleHidden,
-  toggleFeedRunning
+  toggleFeedRunning,
+  makeFeedActivitiesModalVisible,
+  makeFeedActivitiesModalHidden
 } from './Dashboard.state';
 
 test('make schedule visible', () => {
@@ -14,6 +16,24 @@ test('make schedule visible', () => {
 test('make schedule hidden', () => {
   expect(makeScheduleHidden()).toEqual({
     popupScheduleVisible: false
+  });
+});
+
+test('make feed activities modal visible + feed prop', () => {
+  const state = {
+    feeds: [{ id: '1' }]
+  };
+  const feed = state.feeds[0];
+
+  expect(makeFeedActivitiesModalVisible(feed)(state)).toEqual({
+    feedActivitiesModalVisible: true,
+    feedForFeedActivitiesModal: feed
+  });
+});
+
+test('make feed activities modal hidden', () => {
+  expect(makeFeedActivitiesModalHidden()).toEqual({
+    feedActivitiesModalVisible: false
   });
 });
 

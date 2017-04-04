@@ -1,23 +1,32 @@
 import { PureComponent } from 'react';
 import Breadcrumb from './Breadcrumb';
 import Schedule from './Schedule';
-import { RowFeeds, CardFeeds } from './feeds';
+import { RowFeeds, CardFeeds, FeedActivitiesModal } from './feeds';
 import { feeds } from './util';
 import {
   makeScheduleVisible,
   makeScheduleHidden,
-  toggleFeedRunning
+  toggleFeedRunning,
+  makeFeedActivitiesModalVisible,
+  makeFeedActivitiesModalHidden
 } from './Dashboard.state';
 
 export default class Dashboard extends PureComponent {
   state = {
     popupScheduleVisible: false,
+    feedActivitiesModalVisible: false,
+    feedForFeedActivitiesModal: {},
     feeds
   };
 
   render() {
     const c = this;
-    const { popupScheduleVisible, feeds } = c.state;
+    const {
+      popupScheduleVisible,
+      feeds,
+      feedActivitiesModalVisible,
+      feedForFeedActivitiesModal
+    } = c.state;
 
     return (
       <div>
@@ -33,11 +42,19 @@ export default class Dashboard extends PureComponent {
           feeds={feeds}
           onFeedChange={feed => c.setState(toggleFeedRunning(feed))}
           onScheduleClick={() => c.setState(makeScheduleVisible)}
+          onShowFeedActivitiesClick={feed =>
+            c.setState(makeFeedActivitiesModalVisible(feed))}
         />
         <Schedule
           visible={popupScheduleVisible}
           onChange={() => c.setState(makeScheduleHidden)}
         />
+        <FeedActivitiesModal
+          visible={feedActivitiesModalVisible}
+          onCancel={() => c.setState(makeFeedActivitiesModalHidden)}
+          feed={feedForFeedActivitiesModal}
+        />
+
       </div>
     );
   }

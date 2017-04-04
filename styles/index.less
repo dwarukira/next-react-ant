@@ -23,8 +23,8 @@ html {
   border-bottom: @border-width-base @border-style-base @border-color-base;
 }
 
-.feed-status {
-  color: @green-8;
+.feed-enabled {
+  color: @blue-6;
 }
 
 .ant-timeline-item-content {
@@ -56,5 +56,45 @@ html {
   color: @red-5;
   &:hover {
     opacity: 0.7;
+  }
+}
+
+@success: @green-8;
+@error: @red-8;
+
+.text-success {
+  color: @success;
+}
+.bg-success {
+  .ant-badge-count {
+    background-color: @success;
+  }
+}
+.bg-error {
+  .ant-badge-count {
+    background-color: @error;
+  }
+}
+
+@feed-queued-color: @blue-8;
+.feed-queued-text {
+  color: @feed-queued-color;
+}
+.feed-queued-border {
+  border-color: @feed-queued-color;
+  &:hover {
+    border-color: @feed-queued-color;
+  }
+}
+
+@feed-processing-color: @success;
+.feed-processing-text {
+  color: @feed-processing-color;
+}
+
+.feed-processing-border {
+  border-color: @feed-processing-color;
+  &:hover {
+    border-color: @feed-processing-color;
   }
 }

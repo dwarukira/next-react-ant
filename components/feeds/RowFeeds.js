@@ -81,7 +81,7 @@ export default class RowFeeds extends PureComponent {
               <div style={styleHeader}>
                 <div style={styleStatus}>
                   Status:
-                  <span className="feed-status">
+                  <span className="feed-enabled">
                     {` `}{feed.isRunning ? 'Running...' : 'Stopped'}
                   </span>
                 </div>
@@ -91,7 +91,7 @@ export default class RowFeeds extends PureComponent {
                   fontSize: '.8rem'
                 }}
               >
-                <div className="feed-status">
+                <div className="feed-enabled">
                   {feed.status}
                 </div>
                 <div

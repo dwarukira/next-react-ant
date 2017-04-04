@@ -7,6 +7,16 @@ const makeScheduleHidden = (state, props) => ({
   popupScheduleVisible: false
 });
 
+const makeFeedActivitiesModalVisible = feed =>
+  (state, props) => ({
+    feedForFeedActivitiesModal: feed,
+    feedActivitiesModalVisible: true
+  });
+
+const makeFeedActivitiesModalHidden = (state, props) => ({
+  feedActivitiesModalVisible: false
+});
+
 const toggleFeedRunning = feed =>
   (state, props) => {
     const imFeeds = fromJS(state.feeds);
@@ -18,4 +28,10 @@ const toggleFeedRunning = feed =>
     };
   };
 
-export { makeScheduleVisible, makeScheduleHidden, toggleFeedRunning };
+export {
+  makeScheduleVisible,
+  makeScheduleHidden,
+  toggleFeedRunning,
+  makeFeedActivitiesModalVisible,
+  makeFeedActivitiesModalHidden
+};
