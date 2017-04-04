@@ -26,14 +26,11 @@ class FeedActivitiesModal extends PureComponent {
             </Button>
           ]}
         >
-
           <Row type="flex" justify="center">
             <Col span={12}>
-
               <FeedActivities feed={feed} />
             </Col>
           </Row>
-
         </Modal>
       </div>
     );

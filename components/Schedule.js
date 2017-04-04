@@ -2,6 +2,7 @@ import { PureComponent } from 'react';
 import { Form, Select, Modal, Button, Row, Col, Checkbox } from 'antd';
 
 import TimePicker from './TimePicker';
+import TimeZonePicker from './TimeZonePicker';
 
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
@@ -18,7 +19,7 @@ let styleFormControl = {
 };
 
 let styleRow = {
-  marginBottom: '25px'
+  marginBottom: '8px'
 };
 
 const styleCheckAll = {
@@ -97,7 +98,10 @@ class Schedule extends PureComponent {
         >
           <Form>
 
-            <Row gutter={RowProps.Gutter} style={styleRow}>
+            <Row
+              gutter={RowProps.Gutter}
+              style={{ ...styleRow, ...{ marginBottom: 25 } }}
+            >
               <Col span={24}>
                 <div
                   style={{
@@ -132,7 +136,10 @@ class Schedule extends PureComponent {
             </Row>
 
             <p style={{ marginBottom: '8px' }}>Frequency</p>
-            <Row gutter={RowProps.Gutter} style={styleRow}>
+            <Row
+              gutter={RowProps.Gutter}
+              style={{ ...styleRow, ...{ marginBottom: 25 } }}
+            >
               <Col span={12}>
                 <Select
                   style={styleFormControl}
@@ -189,6 +196,21 @@ class Schedule extends PureComponent {
                   }}
                 />
               </Col>
+            </Row>
+            <Row gutter={RowProps.Gutter} style={styleRow}>
+              <Col span={24}>
+                <TimeZonePicker
+                  label="Time Zone"
+                  field="timeZone"
+                  getFieldDecorator={getFieldDecorator}
+                  onChange={timeZone => {
+                    setFieldsValue({
+                      timeZone
+                    });
+                  }}
+                />
+              </Col>
+
             </Row>
           </Form>
         </Modal>
