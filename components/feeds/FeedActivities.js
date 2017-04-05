@@ -10,16 +10,19 @@ const LogBackgroundColor = (status = '') => {
   return cn[status.toLowerCase()];
 };
 
+const TimelineDotColor = (status = '') => {
+  const cn = { success: 'success', error: 'error' };
+  return cn[status.toLowerCase()];
+};
+
 const LogActivity = ({ log, style = {} }) => (
   <Timeline.Item
-    dot={<Icon type="clock-circle-o" style={{ fontSize: '.9rem' }} />}
+    dot={<Badge status={TimelineDotColor(log.status)} className="no-text" />}
   >
-    <DateTime datetime={log.date} />
-    <Badge
-      className={LogBackgroundColor(log.status)}
-      count={`${log.total_variants} Variants`}
-      style={{ fontSize: '.7rem', marginLeft: 8 }}
-    />
+    {DateTime(log.date)}
+    <div>
+      {`${log.total_variants} Variants`}
+    </div>
   </Timeline.Item>
 );
 
@@ -31,21 +34,19 @@ const FeedActivities = ({ feed = {}, count, onSeeMore }) => {
     : [...logs];
   // console.log('recentLogs:', recentLogs);
   return (
-    <div>
+    <div style={{ paddingTop: 16, xpaddingBottom: 16 }}>
       {recentLogs.length > 0 &&
-        <div>
-          <Timeline
-            pending={
-              onSeeMore
-                ? <a href="#" onClick={() => onSeeMore(feed)}>
-                    See more
-                  </a>
-                : ''
-            }
-          >
-            {recentLogs.map(log => <LogActivity log={log} key={log.id} />)}
-          </Timeline>
-        </div>}
+        <Timeline
+          pending={
+            onSeeMore
+              ? <a href="#" onClick={() => onSeeMore(feed)}>
+                  See more
+                </a>
+              : ''
+          }
+        >
+          {recentLogs.map(log => <LogActivity log={log} key={log.id} />)}
+        </Timeline>}
     </div>
   );
 };

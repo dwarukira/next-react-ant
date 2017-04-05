@@ -1,37 +1,22 @@
 import { PureComponent } from 'react';
-import { Form, Select, Modal, Button, Row, Col, Checkbox } from 'antd';
+import {
+  Form,
+  Select,
+  Modal,
+  Button,
+  Row,
+  Col,
+  Checkbox,
+  Icon,
+  InputNumber
+} from 'antd';
 
 import TimePicker from './TimePicker';
 import TimeZonePicker from './TimeZonePicker';
+import { DAYS, DateTimeMoment } from './util';
 
 const Option = Select.Option;
 const CheckboxGroup = Checkbox.Group;
-
-const plainOptions = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-const defaultCheckedList = ['MON', 'FRI'];
-
-const RowProps = {
-  Gutter: 16
-};
-
-let styleFormControl = {
-  width: '100%'
-};
-
-let styleRow = {
-  marginBottom: '8px'
-};
-
-const styleCheckAll = {
-  marginLeft: '10px'
-};
-
-const hours = [...new Array(24)].map((v, i) => {
-  return (i + 1).toString();
-});
-const minutes = [...new Array(60)].map((v, i) => {
-  return (i + 1).toString();
-});
 
 // Functional setState
 const updateFrequencyValue = frequencyValue =>
@@ -39,58 +24,69 @@ const updateFrequencyValue = frequencyValue =>
     frequencyValue
   });
 
-const updateFrequencyType = frequencyType =>
-  (state, props) => ({ frequencyType, frequencyValue: '1' });
-
 const showModalLoading = ModalText =>
   (state, props) => ({ confirmLoading: true, ModalText });
 
-const hideModalLoading = () => (state, props) => ({ confirmLoading: false });
+const hideModalLoading = (state, props) => ({ confirmLoading: false });
 
-const updateDaysChange = (checkedList, plainOptions) =>
-  (state, props) => ({
-    checkedList,
-    indeterminate: !!checkedList.length &&
-      checkedList.length < plainOptions.length,
-    checkAll: checkedList.length === plainOptions.length
-  });
+const updateFeedSchedule = schedule => (state, props) => ({ schedule });
 
-const updateAllDaysChange = (targetChecked, plainOptions) =>
-  (state, props) => ({
-    checkedList: targetChecked ? plainOptions : [],
-    indeterminate: false,
-    checkAll: targetChecked
-  });
+const FeedFrequency = (
+  { getFieldDecorator, initialValue = 1, onChange = () => {} }
+) => (
+  <div>
+    {getFieldDecorator('frequencyValue', {
+      initialValue,
+      rules: [
+        {
+          required: true,
+          message: 'Required'
+        }
+      ],
+      onChange
+    })(<InputNumber min={1} max={24} />)}
+  </div>
+);
 
 class Schedule extends PureComponent {
-  state = {
-    checkedList: defaultCheckedList,
-    indeterminate: true,
-    checkAll: false
-  };
+  state = {};
+
+  componentWillReceiveProps(nextProps) {
+    const {
+      feed = {},
+      feed: { schedule = {} }
+    } = nextProps;
+    // console.log('schedule:', schedule);
+    this.setState(updateFeedSchedule(schedule));
+  }
 
   render() {
     const {
       visible = false,
       onChange = () => {},
+      feed,
       form: { getFieldDecorator, setFieldsValue = () => {} }
     } = this.props;
     const {
-      startTime = '0',
-      endTime = '0',
-      frequencyType = 'minutes',
-      frequencyValue = '1',
+      schedule = {},
       confirmLoading,
-      indeterminate,
-      checkAll,
       checkedList
     } = this.state;
-    const isFrequencyMinutes = frequencyType === 'minutes';
+    const { timeZone, frequencyValue, days } = schedule;
+    const startTime = DateTimeMoment(schedule.startTime);
 
     return (
       <div>
         <Modal
-          title="How frequent should this feed run?"
+          title={
+            <span>
+              {feed.title}
+              {' '}
+              <Icon type="arrow-right" />
+              {' '}
+              How frequent should this feed run?
+            </span>
+          }
           visible={visible}
           onOk={this.handleOk}
           confirmLoading={confirmLoading}
@@ -98,10 +94,7 @@ class Schedule extends PureComponent {
         >
           <Form>
 
-            <Row
-              gutter={RowProps.Gutter}
-              style={{ ...styleRow, ...{ marginBottom: 25 } }}
-            >
+            <Row>
               <Col span={24}>
                 <div
                   style={{
@@ -111,71 +104,63 @@ class Schedule extends PureComponent {
                   className="ant-border-bottom"
                 >
                   Days{`   `}
-                  <Checkbox
-                    style={styleCheckAll}
-                    indeterminate={indeterminate}
-                    onChange={e => {
-                      this.setState(
-                        updateAllDaysChange(e.target.checked, plainOptions)
-                      );
-                    }}
-                    checked={checkAll}
-                  >
-                    Everyday
-                  </Checkbox>
+
                 </div>
 
-                <CheckboxGroup
-                  options={plainOptions}
-                  value={checkedList}
-                  onChange={checkedList => {
-                    this.setState(updateDaysChange(checkedList, plainOptions));
-                  }}
-                />
+                <Form.Item label="">
+                  {getFieldDecorator('days', {
+                    initialValue: days,
+                    rules: [
+                      {
+                        required: true,
+                        message: 'Required'
+                      }
+                    ]
+                  })(<CheckboxGroup options={DAYS} />)}
+                </Form.Item>
+
               </Col>
             </Row>
 
             <p style={{ marginBottom: '8px' }}>Frequency</p>
-            <Row
-              gutter={RowProps.Gutter}
-              style={{ ...styleRow, ...{ marginBottom: 25 } }}
-            >
+            <Row>
               <Col span={12}>
-                <Select
-                  style={styleFormControl}
-                  value={frequencyValue}
-                  onChange={frequencyValue => {
-                    this.setState(updateFrequencyValue(frequencyValue));
-                  }}
-                >
-                  {isFrequencyMinutes
-                    ? minutes.map(minute => (
-                        <Option key={minute} value={minute}>{minute}</Option>
-                      ))
-                    : hours.map(hour => (
-                        <Option key={hour} value={hour}>{hour}</Option>
-                      ))}
+                <Form.Item label="">
 
-                </Select>
+                  <Row
+                    // gutter={16}
+                    type="flex"
+                    justify="space-around"
+                    align="middle"
+                  >
+                    <Col xs={5}>
+                      <small>
+                        Every
+                      </small>
+                    </Col>
+                    <Col xs={10}>
+                      <FeedFrequency
+                        getFieldDecorator={getFieldDecorator}
+                        onChange={frequencyValue => {
+                          this.setState(updateFrequencyValue(frequencyValue));
+                        }}
+                        initialValue={frequencyValue}
+                      />
+                    </Col>
+                    <Col span={6}>
+                      <small>
+                        hours
+                      </small>
+                    </Col>
+                  </Row>
+                </Form.Item>
+
               </Col>
-              <Col span={12}>
-                <Select
-                  style={styleFormControl}
-                  value={frequencyType}
-                  onChange={frequencyType => {
-                    this.setState(updateFrequencyType(frequencyType));
-                  }}
-                >
-                  <Option value="minutes">minute(s)</Option>
-                  <Option value="hours">hours(s)</Option>
-                </Select>
-              </Col>
-            </Row>
-            <Row gutter={RowProps.Gutter} style={styleRow}>
               <Col span={12}>
                 <TimePicker
                   label="Start Time"
                   field="startTime"
+                  initialValue={startTime}
                   getFieldDecorator={getFieldDecorator}
                   onChange={startTime => {
                     setFieldsValue({
@@ -184,24 +169,14 @@ class Schedule extends PureComponent {
                   }}
                 />
               </Col>
-              <Col span={12}>
-                <TimePicker
-                  label="End Time"
-                  field="endTime"
-                  getFieldDecorator={getFieldDecorator}
-                  onChange={endTime => {
-                    setFieldsValue({
-                      endTime
-                    });
-                  }}
-                />
-              </Col>
             </Row>
-            <Row gutter={RowProps.Gutter} style={styleRow}>
+
+            <Row>
               <Col span={24}>
                 <TimeZonePicker
                   label="Time Zone"
                   field="timeZone"
+                  initialValue={timeZone}
                   getFieldDecorator={getFieldDecorator}
                   onChange={timeZone => {
                     setFieldsValue({
@@ -220,6 +195,8 @@ class Schedule extends PureComponent {
 
   handleOk = e => {
     e.preventDefault();
+    const { form, feed } = this.props;
+    const { getFieldsValue } = form;
     this.props.form.validateFields((err, values) => {
       console.log('err of form: ', err);
       console.log('Received values of form: ', values);
@@ -230,10 +207,10 @@ class Schedule extends PureComponent {
         );
         setTimeout(
           () => {
-            onChange();
             this.setState(hideModalLoading);
+            onChange(feed, values);
           },
-          2000
+          10
         );
       }
     });

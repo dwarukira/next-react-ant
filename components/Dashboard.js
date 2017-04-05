@@ -8,7 +8,8 @@ import {
   makeScheduleHidden,
   toggleFeedRunning,
   makeFeedActivitiesModalVisible,
-  makeFeedActivitiesModalHidden
+  makeFeedActivitiesModalHidden,
+  updateFeedScheduleInFeeds
 } from './Dashboard.state';
 
 export default class Dashboard extends PureComponent {
@@ -16,7 +17,8 @@ export default class Dashboard extends PureComponent {
     popupScheduleVisible: false,
     feedActivitiesModalVisible: false,
     feedForFeedActivitiesModal: {},
-    feeds
+    feeds,
+    currentFeed: {}
   };
 
   render() {
@@ -25,7 +27,8 @@ export default class Dashboard extends PureComponent {
       popupScheduleVisible,
       feeds,
       feedActivitiesModalVisible,
-      feedForFeedActivitiesModal
+      feedForFeedActivitiesModal,
+      currentFeed
     } = c.state;
 
     return (
@@ -41,13 +44,18 @@ export default class Dashboard extends PureComponent {
         <CardFeeds
           feeds={feeds}
           onFeedChange={feed => c.setState(toggleFeedRunning(feed))}
-          onScheduleClick={() => c.setState(makeScheduleVisible)}
-          onShowFeedActivitiesClick={feed =>
+          onScheduleClick={feed => c.setState(makeScheduleVisible(feed))}
+          onActivitiesClick={feed =>
             c.setState(makeFeedActivitiesModalVisible(feed))}
         />
         <Schedule
+          feed={currentFeed}
           visible={popupScheduleVisible}
-          onChange={() => c.setState(makeScheduleHidden)}
+          onChange={(feed, schedule) => {
+            console.log('onChange > schedule:', schedule);
+            c.setState(updateFeedScheduleInFeeds(feed, schedule));
+            c.setState(makeScheduleHidden);
+          }}
         />
         <FeedActivitiesModal
           visible={feedActivitiesModalVisible}

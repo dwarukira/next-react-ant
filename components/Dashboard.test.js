@@ -1,15 +1,24 @@
 import { fromJS, toJS } from 'immutable';
+import moment from 'moment';
 import {
   makeScheduleVisible,
   makeScheduleHidden,
   toggleFeedRunning,
   makeFeedActivitiesModalVisible,
-  makeFeedActivitiesModalHidden
+  makeFeedActivitiesModalHidden,
+  updateFeedScheduleInFeeds
 } from './Dashboard.state';
+import { feeds } from './util';
+
+const state = {
+  feeds
+};
+const feed = state.feeds[0];
 
 test('make schedule visible', () => {
-  expect(makeScheduleVisible()).toEqual({
-    popupScheduleVisible: true
+  expect(makeScheduleVisible(feed)(state)).toEqual({
+    popupScheduleVisible: true,
+    currentFeed: feed
   });
 });
 
@@ -20,11 +29,6 @@ test('make schedule hidden', () => {
 });
 
 test('make feed activities modal visible + feed prop', () => {
-  const state = {
-    feeds: [{ id: '1' }]
-  };
-  const feed = state.feeds[0];
-
   expect(makeFeedActivitiesModalVisible(feed)(state)).toEqual({
     feedActivitiesModalVisible: true,
     feedForFeedActivitiesModal: feed
@@ -38,11 +42,19 @@ test('make feed activities modal hidden', () => {
 });
 
 test('toggle feed running', () => {
-  const state = {
-    feeds: [{ id: '1' }]
-  };
   const feed = state.feeds[0];
   expect(toggleFeedRunning(feed)(state)).toEqual({
     feeds: fromJS(state.feeds).setIn([0, 'enabled'], true).toJS()
+  });
+});
+
+test('update feed schedule', () => {
+  const feed = state.feeds[0];
+  const schedule = {
+    startTime: moment(new Date('1-jan-2017')),
+    timeZone: 'Pacific Time (US & Canada)'
+  };
+  expect(updateFeedScheduleInFeeds(feed, schedule)(state)).toEqual({
+    feeds: fromJS(state.feeds).setIn([0, 'schedule'], schedule).toJS()
   });
 });

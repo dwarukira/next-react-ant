@@ -1,8 +1,10 @@
 import { fromJS, toJS } from 'immutable';
 
-const makeScheduleVisible = (state, props) => ({
-  popupScheduleVisible: true
-});
+const makeScheduleVisible = currentFeed =>
+  (state, props) => ({
+    currentFeed,
+    popupScheduleVisible: true
+  });
 const makeScheduleHidden = (state, props) => ({
   popupScheduleVisible: false
 });
@@ -28,10 +30,20 @@ const toggleFeedRunning = feed =>
     };
   };
 
+const updateFeedScheduleInFeeds = (feed, schedule) =>
+  (state, props) => {
+    const imFeeds = fromJS(state.feeds);
+    const index = imFeeds.findIndex(f => f.get('id') === feed.id);
+    return {
+      feeds: imFeeds.setIn([index, 'schedule'], schedule).toJS()
+    };
+  };
+
 export {
   makeScheduleVisible,
   makeScheduleHidden,
   toggleFeedRunning,
   makeFeedActivitiesModalVisible,
-  makeFeedActivitiesModalHidden
+  makeFeedActivitiesModalHidden,
+  updateFeedScheduleInFeeds
 };

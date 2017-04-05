@@ -1,5 +1,5 @@
 import { Button, Icon, Switch, Tooltip } from 'antd';
-
+import { Time, DAYS } from '../util';
 let styleButton = {
   marginRight: '8px'
 };
@@ -31,6 +31,10 @@ const DeleteFeedButton = ({ feed }) => (
   <Button type="danger" shape="circle" icon="delete" style={styleButton} />
 );
 
+const AddFeedButton = ({ feed }) => (
+  <Button type="primary" icon="add" style={styleButton}>Add Feed</Button>
+);
+
 const RunNowButton = ({ size, disabled = false }) => (
   <Button type="default" style={styleButton} size={size} {...{ disabled }}>
     Run Now
@@ -47,13 +51,26 @@ const ScheduleButton = ({ style = {}, onClick = () => {} }) => (
   />
 );
 
-const FeedScheduleInfo = ({ feed, onClick }) => (
-  <span>
-    <span style={{ fontWeight: 600 }}>Schedule</span>
-    <ScheduleButton onClick={onClick} style={{ marginLeft: 5 }} />
-    <br /><span style={{ fontSize: '.8rem' }}>{feed.schedule}</span>
-  </span>
-);
+const FeedScheduleInfo = ({ feed = {}, onClick }) => {
+  const { schedule = {} } = feed;
+  const { timeZone, startTime, days = [], frequencyValue } = schedule;
+  console.log('FeedScheduleInfo > schedule:', schedule);
+  return (
+    <span>
+      <span style={{ fontWeight: 600 }}>Schedule</span>
+      <ScheduleButton onClick={() => onClick(feed)} style={{ marginLeft: 5 }} />
+      <div style={{ fontSize: '.8rem' }}>
+        {days.length === DAYS.length
+          ? 'Every day'
+          : days.map(day => day).join(', ')}
+        <div>
+          {`at ${Time(startTime)}, Every ${frequencyValue} hours`}
+        </div>
+        <div>{timeZone}</div>
+      </div>
+    </span>
+  );
+};
 
 const SIZES = {
   normal: '1.5rem',
@@ -76,5 +93,6 @@ export {
   RunNowButton,
   ScheduleButton,
   FeedScheduleInfo,
-  Image
+  Image,
+  AddFeedButton
 };

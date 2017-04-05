@@ -76,8 +76,8 @@ const storeFields = [
 
 const feedHeadings = [
   {
-    value: 'name',
-    text: 'name',
+    value: '0',
+    text: '0',
     content: 'Adidas Shoes'
   },
   {

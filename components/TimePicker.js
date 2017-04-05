@@ -14,9 +14,12 @@ const timePickerLayout = {
   }
 };
 
-const _TimePicker = ({ getFieldDecorator, onChange, label, field }) => (
+const _TimePicker = (
+  { getFieldDecorator, onChange, label, field, initialValue }
+) => (
   <Form.Item {...timePickerLayout} label={label}>
     {getFieldDecorator(field, {
+      initialValue,
       rules: [
         {
           type: 'object',

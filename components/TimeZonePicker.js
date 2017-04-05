@@ -16,12 +16,14 @@ const layout = {
   }
 };
 
-const TimeZonePicker = ({ getFieldDecorator, onChange, label, field }) => (
+const TimeZonePicker = (
+  { getFieldDecorator, onChange, label, field, initialValue }
+) => (
   <Form.Item {...layout} label={label}>
     {getFieldDecorator(field, {
+      initialValue,
       rules: [
         {
-          type: 'object',
           required: true,
           message: 'Required'
         }
@@ -30,11 +32,6 @@ const TimeZonePicker = ({ getFieldDecorator, onChange, label, field }) => (
     })(
       <Select
         showSearch
-        // style={styleFormControl}
-        // value={frequencyType}
-        // onChange={frequencyType => {
-        //   this.setState(updateFrequencyType(frequencyType));
-        // }}
         filterOption={(input, option) =>
           option.key.toLowerCase().indexOf(input.toLowerCase()) >= 0}
       >
