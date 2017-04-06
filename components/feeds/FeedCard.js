@@ -1,6 +1,7 @@
 import { Card, Row, Col } from 'antd';
 
 import Divider from '../Divider';
+import FileUpload from '../FileUpload';
 
 import {
   RunNowButton,
@@ -64,6 +65,16 @@ const SOURCE_TYPES_WITH_NO_SCHEDULE = [
   SOURCE_TYPES.email
 ];
 
+const cardBodyLayout = {
+  style: {
+    transform: 'translate(-50%,-50%)',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: '85%'
+  }
+};
+
 const FeedCard = (
   {
     feed = {},
@@ -77,9 +88,10 @@ const FeedCard = (
   const isEmailOrFileUpload = SOURCE_TYPES_WITH_NO_SCHEDULE.includes(
     sourceType
   );
-  console.log('SOURCE_TYPES_WITH_NO_SCHEDULE:', SOURCE_TYPES_WITH_NO_SCHEDULE);
-  console.log('sourceType:', sourceType);
-  console.log('FeedCard > isEmailOrFileUpload:', isEmailOrFileUpload);
+  const isFileUpload = [SOURCE_TYPES.uploaded_file].includes(sourceType);
+  const isEmail = [SOURCE_TYPES.email].includes(sourceType);
+  // console.log('SOURCE_TYPES_WITH_NO_SCHEDULE:', SOURCE_TYPES_WITH_NO_SCHEDULE);
+  // console.log('sourceType:', sourceType);
   return (
     <Card
       className={FeedStatusBorderColor(feed.status)}
@@ -106,16 +118,7 @@ const FeedCard = (
       }}
     >
 
-      <div
-        style={{
-          // backgroundColor: 'salmon',
-          transform: 'translate(-50%,-50%)',
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          width: '85%'
-        }}
-      >
+      <div {...cardBodyLayout}>
 
         {feed.logs &&
           feed.logs.length > 0 &&
@@ -130,29 +133,35 @@ const FeedCard = (
 
         {hasFeed &&
           !isEmailOrFileUpload &&
-          <FeedSchedule
-            feed={feed}
-            onFeedChange={onFeedChange}
-            onScheduleClick={onScheduleClick}
-          />}
+          <span>
 
-        <div style={{ textAlign: 'center' }}>
+            <FeedSchedule
+              feed={feed}
+              onFeedChange={onFeedChange}
+              onScheduleClick={onScheduleClick}
+            />
+            <div style={{ textAlign: 'center' }}>
+              <RunNowButton
+                disabled={DISABLE_IF_FEED_STATUSES.includes(feed.status)}
+              />
+            </div>
+
+          </span>}
+
+        <div
+          style={{
+            textAlign: 'center'
+          }}
+        >
           {hasFeed
             ? <span>
-                {isEmailOrFileUpload &&
-                  <div style={{ marginBottom: 8 }}>
-                    Click button to start feed
-                  </div>}
-                <RunNowButton
-                  disabled={DISABLE_IF_FEED_STATUSES.includes(feed.status)}
-                />
+                {isFileUpload && <FileUpload />}
+                {isEmail && <div>clipboard component</div>}
+
               </span>
             : <AddFeedButton />}
         </div>
       </div>
-      <Row>
-        <Col span={24} />
-      </Row>
 
     </Card>
   );
