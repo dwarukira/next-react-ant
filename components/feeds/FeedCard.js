@@ -11,7 +11,7 @@ import {
 } from './FeedActions';
 import FeedSchedule from './FeedSchedule';
 import FeedActivities from './FeedActivities';
-
+import Clipboard from '../Clipboard';
 import { FEED_STATUS, SOURCE_TYPES } from '../util';
 
 const FeedStatusTextColor = (status = '') => {
@@ -104,8 +104,10 @@ const FeedCard = (
             {feed.title}
             {sourceType.length > 0 &&
               <span>
-                {` - `}
-                {feed.sourceType}
+                <small>
+                  {` - `}
+                  {feed.sourceType}
+                </small>
 
               </span>}
 
@@ -156,7 +158,13 @@ const FeedCard = (
           {hasFeed
             ? <span>
                 {isFileUpload && <FileUpload />}
-                {isEmail && <div>clipboard component</div>}
+                {isEmail &&
+                  <span>
+                    <div style={{ marginBottom: 8, fontWeight: 500 }}>
+                      Email
+                    </div>
+                    <Clipboard id={feed.id} defaultValue="email@example.com" />
+                  </span>}
 
               </span>
             : <AddFeedButton />}

@@ -17,6 +17,7 @@
     "autoprefixer": "6.7.6",
     "babel-plugin-module-resolver": "2.5.0",
     "babel-plugin-wrap-in-js": "^1.1.0",
+    "clipboard": "^1.6.1",
     "glob": "7.1.1",
     "immutable": "^3.8.1",
     "next": "^2.0.0-beta.18",
