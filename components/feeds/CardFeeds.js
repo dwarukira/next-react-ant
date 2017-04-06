@@ -11,7 +11,7 @@ const columnLayout = {
 };
 
 const rowLayout = {
-  style: { padding: '30px' },
+  style: { padding: '30px 8px' },
   gutter: 24,
   type: 'flex',
   justify: 'start'

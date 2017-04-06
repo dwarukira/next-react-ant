@@ -2,6 +2,24 @@ import moment from 'moment';
 
 const DAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
+const SOURCE_TYPES = {
+  uploaded_file: 'Upload file',
+  online_file: 'Download link',
+  ftp: 'FTP',
+  sftp: 'SFTP',
+  google_spreadsheet: 'Google Spreadsheet',
+  google_drive: 'Google Drive',
+  dropbox: 'Dropbox',
+  email: 'Email',
+  soap: 'Soap (Request support for setup)',
+  wordpress: 'Wordpress Woocommerce (Coming soon)',
+  ebay: 'eBay',
+  etsy: 'Etsy',
+  ftps: 'FTP (TLS Enabled)',
+  one_drive_file: 'One Drive',
+  rest_api: 'Rest API (beta)'
+};
+
 const FEED_STATUS = {
   QUEUED: 'queued',
   PROCESSING: 'processing'
@@ -11,7 +29,7 @@ const feeds = [
   {
     id: '1',
     title: 'Feed 1',
-    fromType: 'Spreadsheet',
+    sourceType: 'Spreadsheet',
     from: 'file-excel',
     to: 'file-excel',
     status: 'processing',
@@ -53,7 +71,7 @@ const feeds = [
   {
     id: '2',
     title: 'Feed 2',
-    fromType: 'CSV',
+    sourceType: 'CSV',
     from: 'file-text',
     to: 'https://www.avalara.com/wp-content/uploads/2016/04/shopify_icon.png',
     status: 'queued',
@@ -68,13 +86,29 @@ const feeds = [
   {
     id: '3',
     title: 'Feed 3',
-    fromType: 'CSV',
+    sourceType: SOURCE_TYPES.uploaded_file,
+    from: 'file-pdf',
+    to: 'https://www.avalara.com/wp-content/uploads/2016/04/shopify_icon.png'
+  },
+  {
+    id: '4',
+    title: 'Feed 4',
+    sourceType: SOURCE_TYPES.email,
+    from: 'file-pdf',
+    to: 'https://www.avalara.com/wp-content/uploads/2016/04/shopify_icon.png'
+  },
+  {
+    id: '5',
+    title: 'Feed 5',
+    sourceType: SOURCE_TYPES.dropbox,
     from: 'file-pdf',
     to: 'https://www.avalara.com/wp-content/uploads/2016/04/shopify_icon.png'
   }
 ];
 
-const DateTimeMoment = datetime =>
+const currentUnix = () => new Date().getTime() / 1000;
+
+const DateTimeMoment = (datetime = currentUnix()) =>
   moment.isMoment(datetime) ? datetime : moment.unix(datetime);
 
 const DateTime = datetime =>
@@ -236,4 +270,13 @@ const TIME_ZONES = [
   { 'Tokelau Is.': '(GMT+13:00) Tokelau Is.' }
 ];
 
-export { feeds, DateTime, Time, DateTimeMoment, FEED_STATUS, TIME_ZONES, DAYS };
+export {
+  feeds,
+  DateTime,
+  Time,
+  DateTimeMoment,
+  FEED_STATUS,
+  TIME_ZONES,
+  DAYS,
+  SOURCE_TYPES
+};

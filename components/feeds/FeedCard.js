@@ -11,7 +11,7 @@ import {
 import FeedSchedule from './FeedSchedule';
 import FeedActivities from './FeedActivities';
 
-import { FEED_STATUS } from '../util';
+import { FEED_STATUS, SOURCE_TYPES } from '../util';
 
 const FeedStatusTextColor = (status = '') => {
   const cn = {
@@ -59,6 +59,11 @@ const CardExtra = ({ feed, onFeedChange }) => (
   </div>
 );
 
+const SOURCE_TYPES_WITH_NO_SCHEDULE = [
+  SOURCE_TYPES.uploaded_file,
+  SOURCE_TYPES.email
+];
+
 const FeedCard = (
   {
     feed = {},
@@ -68,16 +73,29 @@ const FeedCard = (
   }
 ) => {
   const hasFeed = Object.keys(feed).length > 0;
+  const { sourceType = '' } = feed;
+  const isEmailOrFileUpload = SOURCE_TYPES_WITH_NO_SCHEDULE.includes(
+    sourceType
+  );
+  console.log('SOURCE_TYPES_WITH_NO_SCHEDULE:', SOURCE_TYPES_WITH_NO_SCHEDULE);
+  console.log('sourceType:', sourceType);
+  console.log('FeedCard > isEmailOrFileUpload:', isEmailOrFileUpload);
   return (
     <Card
       className={FeedStatusBorderColor(feed.status)}
       style={{ borderWidth: 2 }}
-      bodyStyle={{ padding: 0 }}
+      bodyStyle={{ position: 'relative', padding: '16px 24px', minHeight: 312 }}
       title={
         <span>
           <Col span={17} style={{ textAlign: 'left' }}>
 
             {feed.title}
+            {sourceType.length > 0 &&
+              <span>
+                {` - `}
+                {feed.sourceType}
+
+              </span>}
 
           </Col>
 
@@ -88,27 +106,54 @@ const FeedCard = (
       }}
     >
 
-      <div style={{ padding: '16px 24px' }}>
+      <div
+        style={{
+          // backgroundColor: 'salmon',
+          transform: 'translate(-50%,-50%)',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: '85%'
+        }}
+      >
 
-        <FeedActivities count={1} feed={feed} onSeeMore={onActivitiesClick} />
-        {feed.logs && feed.logs.length > 0 && <Divider paddingTop={0} />}
-        {feed.schedule &&
+        {feed.logs &&
+          feed.logs.length > 0 &&
+          <span>
+            <FeedActivities
+              count={1}
+              feed={feed}
+              onSeeMore={onActivitiesClick}
+            />
+            <Divider paddingTop={0} />
+          </span>}
+
+        {hasFeed &&
+          !isEmailOrFileUpload &&
           <FeedSchedule
             feed={feed}
             onFeedChange={onFeedChange}
             onScheduleClick={onScheduleClick}
           />}
-        <Row style={{ textAlign: 'center' }}>
-          <Col span={24}>
-            {hasFeed
-              ? <RunNowButton
+
+        <div style={{ textAlign: 'center' }}>
+          {hasFeed
+            ? <span>
+                {isEmailOrFileUpload &&
+                  <div style={{ marginBottom: 8 }}>
+                    Click button to start feed
+                  </div>}
+                <RunNowButton
                   disabled={DISABLE_IF_FEED_STATUSES.includes(feed.status)}
                 />
-              : <AddFeedButton />}
-          </Col>
-        </Row>
-
+              </span>
+            : <AddFeedButton />}
+        </div>
       </div>
+      <Row>
+        <Col span={24} />
+      </Row>
+
     </Card>
   );
 };

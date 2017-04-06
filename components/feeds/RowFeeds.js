@@ -73,7 +73,7 @@ export default class RowFeeds extends PureComponent {
               </Row>
               <Row style={styleFeedType}>
                 <Col span={24}>
-                  {feed.fromType}
+                  {feed.sourceType}
                 </Col>
               </Row>
             </Col>

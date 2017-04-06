@@ -51,6 +51,7 @@ export default class Dashboard extends PureComponent {
         <Schedule
           feed={currentFeed}
           visible={popupScheduleVisible}
+          onCancel={() => c.setState(makeScheduleHidden)}
           onChange={(feed, schedule) => {
             console.log('onChange > schedule:', schedule);
             c.setState(updateFeedScheduleInFeeds(feed, schedule));

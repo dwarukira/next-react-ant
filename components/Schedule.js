@@ -64,6 +64,7 @@ class Schedule extends PureComponent {
     const {
       visible = false,
       onChange = () => {},
+      onCancel = () => {},
       feed,
       form: { getFieldDecorator, setFieldsValue = () => {} }
     } = this.props;
@@ -90,7 +91,7 @@ class Schedule extends PureComponent {
           visible={visible}
           onOk={this.handleOk}
           confirmLoading={confirmLoading}
-          onCancel={onChange}
+          onCancel={onCancel}
         >
           <Form>
 

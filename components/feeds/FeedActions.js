@@ -1,5 +1,4 @@
 import { Button, Icon, Switch, Tooltip } from 'antd';
-import { Time, DAYS } from '../util';
 let styleButton = {
   marginRight: '8px'
 };
@@ -32,7 +31,17 @@ const DeleteFeedButton = ({ feed }) => (
 );
 
 const AddFeedButton = ({ feed }) => (
-  <Button type="primary" icon="add" style={styleButton}>Add Feed</Button>
+  <span>
+
+    <Button
+      type="dashed"
+      icon="plus-square-o"
+      style={{ fontSize: '5rem', padding: '0 1.4rem' }}
+    />
+    <div style={{ fontSize: '1rem', marginTop: '1rem' }}>
+      Add Feed
+    </div>
+  </span>
 );
 
 const RunNowButton = ({ size, disabled = false }) => (
@@ -41,36 +50,14 @@ const RunNowButton = ({ size, disabled = false }) => (
   </Button>
 );
 
-const ScheduleButton = ({ style = {}, onClick = () => {} }) => (
+const ScheduleButton = ({ style = {}, onClick }) => (
   <Button
     shape="circle"
-    // type="dashed"
     icon="edit"
-    style={{ ...styleButton, ...{ xborder: 0 }, ...style }}
+    style={{ ...styleButton, ...style }}
     onClick={onClick}
   />
 );
-
-const FeedScheduleInfo = ({ feed = {}, onClick }) => {
-  const { schedule = {} } = feed;
-  const { timeZone, startTime, days = [], frequencyValue } = schedule;
-  console.log('FeedScheduleInfo > schedule:', schedule);
-  return (
-    <span>
-      <span style={{ fontWeight: 600 }}>Schedule</span>
-      <ScheduleButton onClick={() => onClick(feed)} style={{ marginLeft: 5 }} />
-      <div style={{ fontSize: '.8rem' }}>
-        {days.length === DAYS.length
-          ? 'Every day'
-          : days.map(day => day).join(', ')}
-        <div>
-          {`at ${Time(startTime)}, Every ${frequencyValue} hours`}
-        </div>
-        <div>{timeZone}</div>
-      </div>
-    </span>
-  );
-};
 
 const SIZES = {
   normal: '1.5rem',
@@ -92,7 +79,6 @@ export {
   DeleteFeedButton,
   RunNowButton,
   ScheduleButton,
-  FeedScheduleInfo,
   Image,
   AddFeedButton
 };
