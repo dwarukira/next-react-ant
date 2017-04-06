@@ -54,7 +54,7 @@ const WithSchedule = ({ feed, onFeedChange, onScheduleClick }) => (
 const NoSchedule = ({ onScheduleClick, feed }) => (
   <Row {...rowLayout}>
     <Col {...leftColumnLayout}>
-      <Icon type="clock-circle-o" style={{ fontSize: 48 }} />
+      <Icon type="clock-circle-o" style={{ fontSize: 56 }} />
     </Col>
     <Col {...rightColumnLayout}>
       <FeedScheduleInfo feed={feed} onClick={onScheduleClick} />

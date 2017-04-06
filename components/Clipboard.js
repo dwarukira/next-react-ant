@@ -3,8 +3,8 @@ import _Clipboard from 'clipboard';
 
 import { Input, Button, Tooltip } from 'antd';
 
-const getInputId = id => `input-${id}`;
-const getButtonId = id => `button-${id}`;
+const getInputId = id => `cb-input-${id}`;
+const getButtonId = id => `cb-button-${id}`;
 const TOOLTIP_TEXT = 'Copied to clipboard!';
 
 class Clipboard extends PureComponent {
