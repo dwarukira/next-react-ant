@@ -1,3 +1,5 @@
-# Using Ant Design for the UI Framework
+# Next.js + React + Ant Design + Jest
 
-Evaluating versus Semantic UI React
+A mockup of card layout exploring the component of Ant Design, with React and Next.js under the hood.
+
+Jest for javascript testing. Husky for pre-commit hooks
